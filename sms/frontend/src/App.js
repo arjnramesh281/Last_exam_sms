@@ -1,5 +1,5 @@
 import React from 'react';
-import StudentManagement from './StudentManagement';
+import StudentManagement from './components/StudentManagement';
 
 function App() {
   return (

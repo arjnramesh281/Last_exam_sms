@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000/api/students/';
+// Define the API URL
+// const API_URL = 'http://127.0.0.1:8000/api/students/';
 
 function StudentManagement() {
   const [students, setStudents] = useState([]);
-  const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    date_of_birth: '',
-  });
+  const [formData, setFormData] = useState({std_id:null ,first_name: '',last_name: '',email: '',phone:null,date_of_birth: '',create_at:''});
 
   useEffect(() => {
     fetchStudents();
   }, []);
 
   const fetchStudents = async () => {
-    const response = await axios.get(API_URL);
-    setStudents(response.data);
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/students/'); // Use API_URL here
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
   };
 
   const handleChange = (e) => {
@@ -27,14 +27,22 @@ function StudentManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(API_URL, formData);
-    fetchStudents();
-    setFormData({ first_name: '', last_name: '', email: '', date_of_birth: '' });
+    try {
+      await axios.post('http://127.0.0.1:8000/api/students/', formData); // Use API_URL here
+      fetchStudents();
+      setFormData({std_id:'' , first_name: '', last_name: '', email: '',phone:'', date_of_birth: '',create_at:'' });
+    } catch (error) {
+      console.error("Error adding student:", error);
+    }
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`${API_URL}${id}/`);
-    fetchStudents();
+    try {
+      await axios.delete(`${'http://127.0.0.1:8000/api/students/'}${id}/`); // Use API_URL here
+      fetchStudents();
+    } catch (error) {
+      console.error("Error deleting student:", error);
+    }
   };
 
   return (
@@ -66,20 +74,35 @@ function StudentManagement() {
           required
         />
         <input
+          type="number"
+          name="number"
+          placeholder="number"
+          value={formData.phone}
+          onChange={handleChange}
+          required
+        />
+        <input
           type="date"
           name="date_of_birth"
           value={formData.date_of_birth}
           onChange={handleChange}
           required
         />
-        <button type="submit">Add Student</button>
+        <input
+          type="date"
+          name="create_at"
+          value={formData.create_at}
+          onChange={handleChange}
+          required
+        />
+        <button  type="submit">Add Student</button>
       </form>
 
       <h2>Student List</h2>
       <ul>
         {students.map((student) => (
           <li key={student.id}>
-            {student.first_name} {student.last_name} - {student.email}
+           {student.std_id} {student.first_name} {student.last_name} - {student.email} - {student.phone} - {student.date_of_birth} - {student.create_at}
             <button onClick={() => handleDelete(student.id)}>Delete</button>
           </li>
         ))}
